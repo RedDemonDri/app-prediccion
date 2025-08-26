@@ -1,4 +1,50 @@
+# Entorno virtual
 venv/
+ENV/
+env/
+
+# Archivos compilados de Python
 *.pyc
+*.pyo
 __pycache__/
+
+# Base de datos local de Django
 db.sqlite3
+
+# Archivos de logs
+*.log
+
+# Archivos de configuración de Django
+*.pot
+*.mo
+
+# Archivos de migración que no quieras subir (opcional)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Configuración de IDEs / editores
+.vscode/
+.idea/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Librerías de data science instaladas localmente (si usás pip install --user)
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Otros archivos de Python packaging
+pip-wheel-metadata/
+*.egg
+*.whl
+
+# Archivos de testing / notebooks temporales
+*.ipynb_checkpoints
+
+# Archivos de exportación temporal
+*.csv
+*.xlsx
+*.pdf
