@@ -1,0 +1,19 @@
+{% with "data_"|add:component.template_id as data_key %}
+    <script type="module">
+        var data_{{ component.template_id }} = {{rendered_value|safe}};
+
+        Plotly.newPlot(
+            '{{ component.template_id }}',
+            data_{{ component.template_id }}.data,
+            data_{{ component.template_id }}.layout,
+            {
+                showLink: false,
+                responsive: {{ component.responsive|yesno:"true,false" }}
+            },
+        );
+    </script>
+{% endwith %}
+
+<div id="{{ component.template_id }}" class="{{ component.css_classes }}"></div>
+
+

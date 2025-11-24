@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Tabla{% endblock %}
+{% block header %}Tabla de Registros{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <input id="buscador" type="text" placeholder="Buscar..."
+        class="form-control shadow-sm p-2 border rounded w-50">
+</div>
+
+<div class="table-responsive">
+<div class="flex justify-between items-center mb-2">
+    <div></div>
+    <div>
+        <button id="export-csv" class="bg-blue-600 text-white px-3 py-1 rounded shadow">Exportar CSV</button>
+    </div>
+</div>
+
+<table class="table table-striped table-hover shadow-sm w-full">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Valor</th>
+            <th>Registrado</th>
+        </tr>
+    </thead>
+    <tbody id="tabla-registros">
+        {% for item in registros %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.value }}</td>
+            <td>{{ item.recorded_at|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<script>
+    const input = document.getElementById("buscador");
+    const filas = document.querySelectorAll("#tabla-registros tr");
+
+    input.addEventListener("keyup", function() {
+        const texto = this.value.toLowerCase();
+
+        filas.forEach(fila => {
+            fila.style.display = fila.innerText.toLowerCase().includes(texto)
+                ? ""
+                : "none";
+        });
+    });
+
+    // Exportar CSV simple
+    document.getElementById('export-csv').addEventListener('click', function(){
+        const rows = Array.from(document.querySelectorAll('#tabla-registros tr'))
+            .filter(r => r.style.display !== 'none')
+            .map(r => Array.from(r.children).map(td => '"' + td.innerText.replace(/"/g,'""') + '"'));
+
+        const csvContent = [ ['ID','Nombre','Valor','Registrado'].join(',') ]
+            .concat(rows.map(r => r.join(','))).join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'metrics_export.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+</script>
+
+{% endblock %}

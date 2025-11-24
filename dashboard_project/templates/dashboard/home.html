@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+{% block header %}Panel General{% endblock %}
+
+{% block content %}
+
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+
+    <!-- Tarjeta 1 -->
+    <div class="bg-white rounded-lg shadow p-4">
+        <h6 class="text-sm text-gray-500">Total de registros</h6>
+        <div class="text-2xl font-bold">{{ total_registros }}</div>
+    </div>
+
+    <!-- Tarjeta 2: Valor total -->
+    <div class="bg-white rounded-lg shadow p-4">
+        <h6 class="text-sm text-gray-500">Valor total</h6>
+        <div class="text-2xl font-bold">{{ total_valor|floatformat:2 }}</div>
+    </div>
+
+    <!-- Tarjeta 3 -->
+    <div class="bg-white rounded-lg shadow p-4">
+        <h6 class="text-sm text-gray-500">Nuevas entradas</h6>
+        <div class="text-2xl font-bold">{{ nuevas_entradas }}</div>
+    </div>
+
+</div>
+
+<!-- Cartelito / descripción -->
+<p class="text-gray-600 mb-4">Evolución semanal (últimos 7 días)</p>
+
+<!-- Card del gráfico -->
+<div class="bg-white rounded-lg shadow p-4">
+    <div id="chart"></div>
+</div>
+
+<!-- ApexCharts CDN -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+    // Datos enviados desde Django (seguro: listas)
+    const labels = {{ chart_labels|safe }};
+    const values = {{ chart_values|safe }};
+
+    // Configuración del gráfico
+
+    const options = {
+        chart: {
+            type: 'area',
+            height: 320,
+            toolbar: { show: false },
+            zoom: { enabled: false }
+        },
+        series: [{
+            name: 'Registros',
+            data: values
+        }],
+        xaxis: {
+            categories: labels,
+            labels: { rotate: -45 }
+        },
+        stroke: { curve: 'smooth', width: 2 },
+        fill: {
+            type: 'gradient',
+            gradient: { shadeIntensity: 0.4, opacityFrom: 0.6, opacityTo: 0.1 }
+        },
+        tooltip: {
+            x: { format: 'dd/MM' }
+        },
+        grid: { borderColor: '#e6e6e6' },
+        colors: ['#2563eb']  // azul (Tailwind blue-600)
+    };
+
+    const chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+</script>
+
+{% endblock %}

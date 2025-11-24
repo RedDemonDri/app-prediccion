@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesión{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto mt-8 bg-white p-6 rounded shadow">
+    <h2 class="text-xl font-semibold mb-4">Iniciar sesión</h2>
+
+    {% if form.errors %}
+    <div class="mb-3 text-red-600">Tus credenciales no son válidas. Intenta nuevamente.</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_username" class="block text-sm font-medium text-gray-700">Usuario</label>
+            {{ form.username }}
+        </div>
+        <div class="mb-3">
+            <label for="id_password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+            {{ form.password }}
+        </div>
+        <p class="text-xs text-gray-500 mt-2">Nota: Inicia sesión con tu <strong>nombre de usuario</strong>, no con el correo electrónico (a menos que tu nombre de usuario sea tu correo).</p>
+        <div class="flex items-center justify-between mt-4">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Entrar</button>
+            <a href="/admin/login/" class="text-sm text-gray-600">Entrar al admin</a>
+        </div>
+    </form>
+    <p class="mt-4 text-sm">¿No tienes cuenta? <a href="{% url 'register' %}" class="text-blue-600">Regístrate</a></p>
+</div>
+{% endblock %}

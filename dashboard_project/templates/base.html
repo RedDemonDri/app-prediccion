@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Flowbite -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
+</head>
+<body class="bg-gray-100 flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white border-r h-screen fixed">
+        <div class="p-6 border-b">
+            <h2 class="text-2xl font-bold text-blue-700">Dashboard</h2>
+        </div>
+
+        <nav class="p-4 space-y-2">
+            <a href="/" class="block px-4 py-2 rounded hover:bg-blue-100">
+                Inicio
+            </a>
+
+            <a href="{% url 'tabla' %}" class="block px-4 py-2 rounded hover:bg-blue-100">
+                Tabla
+            </a>
+
+            <a href="#" class="block px-4 py-2 rounded hover:bg-blue-100">
+                Reportes
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="flex-1 min-h-screen ml-64">
+        <!-- NAVBAR -->
+        <header class="bg-white border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+                <div>
+                    {% block header %}<h1 class="text-lg font-semibold">Panel</h1>{% endblock %}
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    {% if request.user.is_authenticated %}
+                        <span class="text-sm text-gray-700">Hola, {{ request.user.get_username }}</span>
+                        <form method="post" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="text-sm text-blue-600 hover:underline bg-transparent border-0 p-0 cursor-pointer">Cerrar sesión</button>
+                        </form>
+                        <a href="/admin/" class="text-sm text-gray-600">Admin</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-sm text-blue-600 hover:underline">Iniciar sesión</a>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <main class="p-6">
+            {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {% for message in messages %}
+                    {% if 'success' in message.tags %}
+                        <div class="mb-4 p-4 rounded bg-green-100 text-green-800 border border-green-200">{{ message }}</div>
+                    {% elif 'error' in message.tags or 'danger' in message.tags %}
+                        <div class="mb-4 p-4 rounded bg-red-100 text-red-800 border border-red-200">{{ message }}</div>
+                    {% else %}
+                        <div class="mb-4 p-4 rounded bg-blue-50 text-blue-800 border border-blue-100">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+</body>
+</html>

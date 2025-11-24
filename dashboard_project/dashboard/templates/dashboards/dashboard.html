@@ -1,0 +1,68 @@
+{% extends "dashboards/base.html" %}
+{% load static %}
+{% load dashboards %}
+
+{% block dashboards_js %}
+{{ block.super }}
+{% include "dashboards/includes/static/js.html" %}
+<!-- dashboard defined js -->
+{{ dashboard.media.js.render }}
+<!-- end dashboard defined js -->
+{% endblock %}
+
+{% block dashboards_style %}
+{{ block.super }}
+<!-- dashboard defined css -->
+{{ dashboard.media.css.render }}
+<!-- end dashboard defined css -->
+{% endblock %}
+
+{% block content %}
+{% dashboard_menus %}
+
+{% if sections.items %}
+<div class="menu-card">
+    <div class="bumper"></div>
+    {% block navigation %}
+    <nav role="navigation">
+        <ul class="menu">
+            {% for section, items in sections.items %}
+            <li class="{% if section == active_section %}active{% endif %}">
+                {% if items|length > 1 %}
+                    <a href="#">{{ section }}</a>
+                    <ul class="dropdown">
+                        {% for item in items %}
+                        <li class="{% if item.selected %}active{% endif %}">
+                            <a href="{{ item.url }}">{{ item.title }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <a href="{{ items.0.url }}">{{ section }}</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+            <li>
+                <a href="#">☼</a>
+                <ul class="dropdown">
+                    <li class="{% if request.COOKIES.appearanceMode == 'light' %}active{% endif %}">
+                        <a href="#" onclick="Dashboard.setAppearance('light'); location.reload();">☼ light</a>
+                    </li>
+                    <li class="{% if request.COOKIES.appearanceMode == 'dark' %}active{% endif %}">
+                        <a href="#" onclick="Dashboard.setAppearance('dark'); location.reload();">☾ dark</a>
+                    </li>
+                    <li class="{% if not request.COOKIES.appearanceMode %}active{% endif %}">
+                        <a href="#" onclick="Dashboard.setAppearance(null); location.reload();">🖳 system</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    {% endblock navigation %}
+    <div class="bumper"></div>
+</div>
+{% endif %}
+<div class="dashboard-container">
+    {% render_dashboard dashboard %}
+</div>
+{% endblock %}
