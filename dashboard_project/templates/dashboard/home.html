@@ -27,11 +27,48 @@
 </div>
 
 <!-- Cartelito / descripción -->
-<p class="text-gray-600 mb-4">Evolución semanal (últimos 7 días)</p>
+<div class="flex items-center justify-between mb-4">
+    <p class="text-gray-600">Evolución</p>
+    <div class="flex items-center space-x-2">
+        <button class="px-3 py-1 border rounded range-preset" data-range="7">Últimos 7 días</button>
+        <button class="px-3 py-1 border rounded range-preset" data-range="30">Últimos 30 días</button>
+        <button class="px-3 py-1 border rounded range-preset" data-range="month">Este mes</button>
+        <button class="px-3 py-1 border rounded range-preset" data-range="year">Último año</button>
+    </div>
+    <div class="flex items-center space-x-2">
+        <label class="text-sm">Granularidad:</label>
+        <select id="granularity-select" class="border rounded px-2 py-1">
+            <option value="daily" {% if granularity == 'daily' %}selected{% endif %}>Diario</option>
+            <option value="weekly" {% if granularity == 'weekly' %}selected{% endif %}>Semanal</option>
+            <option value="monthly" {% if granularity == 'monthly' %}selected{% endif %}>Mensual</option>
+            <option value="yearly" {% if granularity == 'yearly' %}selected{% endif %}>Anual</option>
+        </select>
+        <!-- Category and metrics multi-select -->
+        <label class="text-sm">Categoría:</label>
+        <select id="category-select" class="border rounded px-2 py-1">
+            <option value="">Todas</option>
+            {% for c in categories %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label class="text-sm">Métricas:</label>
+        <select id="metrics-select" multiple size="3" class="border rounded px-2 py-1">
+            {% for m in metrics_for_category %}
+            <option value="{{ m.id }}" {% if metric_for_chart and m.id == metric_for_chart.id %}selected{% endif %}>{{ m.name }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="date" id="from-date" value="{{ range_from }}" class="border rounded px-2 py-1" />
+        <input type="date" id="to-date" value="{{ range_to }}" class="border rounded px-2 py-1" />
+        <button id="apply-range" class="bg-blue-600 text-white px-3 py-1 rounded">Aplicar</button>
+    </div>
+</div>
 
 <!-- Card del gráfico -->
 <div class="bg-white rounded-lg shadow p-4">
     <div id="chart"></div>
+    <p class="text-xs text-gray-500 mt-2">Fechas interpretadas en zona horaria del servidor.</p>
 </div>
 
 <!-- ApexCharts CDN -->
@@ -73,6 +110,11 @@
 
     const chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
+    // expose chart to global for dashboard-range.js
+    window.dashboardChart = chart;
 </script>
+
+<!-- range JS -->
+<script src="{{ STATIC_URL }}js/dashboard-range.js"></script>
 
 {% endblock %}
